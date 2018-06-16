@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register user{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+    <small class="d-block text-right mt-3">
+        <a href="{{ path('micro_post_index') }}">back list</a>
+    </small>
+{% endblock %}
