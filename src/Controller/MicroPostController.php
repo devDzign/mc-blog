@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\MicroPost;
 use App\Form\MicroPostType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -50,13 +51,15 @@ class MicroPostController extends Controller
 
     /**
      * @Route("/add", name="micro_post_add")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function add(Request $request)
     {
+        $user = $this->getUser();
         $microPost = new MicroPost();
         $microPost->setTime(new \DateTime());
+        $microPost->setUser($user);
         $form =$this->createForm(MicroPostType::class, $microPost);
-
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $em = $this->getDoctrine()->getManager();
@@ -82,6 +85,7 @@ class MicroPostController extends Controller
 
     /**
      * @Route("/delete/{id}", name="micro_post_delete")
+     * @Security("is_granted('ddelete', microPost", message="Acess denied")
      */
     public function delete(MicroPost $microPost)
     {
