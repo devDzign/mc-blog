@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MicroPost;
+use App\Entity\User;
 use App\Form\MicroPostType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,7 +58,6 @@ class MicroPostController extends Controller
     {
         $user = $this->getUser();
         $microPost = new MicroPost();
-        $microPost->setTime(new \DateTime());
         $microPost->setUser($user);
         $form =$this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
@@ -83,6 +83,8 @@ class MicroPostController extends Controller
         ]);
     }
 
+
+
     /**
      * @Route("/delete/{id}", name="micro_post_delete")
      * @Security("is_granted('ddelete', microPost", message="Acess denied")
@@ -95,5 +97,16 @@ class MicroPostController extends Controller
         $em->flush();
         $this->addFlash('notice', 'Micro post was removed');
         return new RedirectResponse($this->generateUrl('micro_post_index'));
+    }
+
+    /**
+     * @Route("/user/{username}", name="micro_post_user")
+     */
+    public function userPosts(User $user)
+    {
+
+        return $this->render('micro_post/index.html.twig', [
+            'posts' => $user->getPosts(),
+        ]);
     }
 }
