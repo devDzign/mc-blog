@@ -14,22 +14,25 @@ class AppFixtures extends Fixture
     private const USERS
         = [
             [
-                'username' => 'mourad_chab',
+                'username' => 'mou_cha',
                 'email'    => 'john_doe@doe.com',
                 'password' => 'admin',
                 'fullName' => 'John Doe',
+                'roles'=> [User::ROLE_ADMIN]
             ],
             [
-                'username' => 'yas_ikhl',
+                'username' => 'yas_ikh',
                 'email'    => 'rob_smith@smith.com',
                 'password' => 'admin',
                 'fullName' => 'Rob Smith',
+                'roles'=> [User::ROLE_USER]
             ],
             [
                 'username' => 'sam-ta',
                 'email'    => 'marry_gold@gold.com',
                 'password' => 'admin',
                 'fullName' => 'Marry Gold',
+                'roles'=> [User::ROLE_USER]
             ],
         ];
 
@@ -79,15 +82,16 @@ class AppFixtures extends Fixture
 
     private function loadUser(ObjectManager $manager)
     {
-        foreach (self::USERS as $U) {
+        foreach (self::USERS as $userData) {
             $user = new User();
-            $user->setUsername($U['username']);
-            $user->setFullName($U['fullName']);
-            $user->setEmail($U['email']);
+            $user->setUsername($userData['username']);
+            $user->setFullName($userData['fullName']);
+            $user->setEmail($userData['email']);
 
-            $password = $this->encoder->encodePassword($user, $U['password']);
+            $password = $this->encoder->encodePassword($user, $userData['password']);
+            $user->setRoles($userData['roles']);
             $user->setPassword($password);
-            $this->addReference($U['username'], $user);
+            $this->addReference($userData['username'], $user);
 
             $manager->persist($user);
             $manager->flush();
