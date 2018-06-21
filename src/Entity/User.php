@@ -62,16 +62,33 @@ class User implements UserInterface, \Serializable
      */
     private $posts;
 
-
     /**
      * @var array $roles
      * @ORM\Column(type="simple_array")
      */
     private $roles;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="following")
+     */
+    private $followers;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="followers")
+     * @ORM\JoinTable(
+     *     name="following",
+     *     joinColumns={@ORM\JoinColumn(name="following_user_is", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="follow_user_id", referencedColumnName="id")}
+     * )
+     */
+    private $following;
+
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->following = new ArrayCollection();
     }
 
 
@@ -306,6 +323,58 @@ class User implements UserInterface, \Serializable
             if ($post->getUser() === $this) {
                 $post->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getFollowers(): Collection
+    {
+        return $this->followers;
+    }
+
+    public function addFollower(User $follower): self
+    {
+        if (!$this->followers->contains($follower)) {
+            $this->followers[] = $follower;
+        }
+
+        return $this;
+    }
+
+    public function removeFollower(User $follower): self
+    {
+        if ($this->followers->contains($follower)) {
+            $this->followers->removeElement($follower);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getFollowing(): Collection
+    {
+        return $this->following;
+    }
+
+    public function addFollowing(User $following): self
+    {
+        if (!$this->following->contains($following)) {
+            $this->following[] = $following;
+        }
+
+        return $this;
+    }
+
+    public function removeFollowing(User $following): self
+    {
+        if ($this->following->contains($following)) {
+            $this->following->removeElement($following);
         }
 
         return $this;

@@ -19,35 +19,48 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class MicroPostController extends Controller
 {
-    
+
     /**
      * @Route("/", name="micro_post_index")
      */
     public function index()
     {
-        return $this->render('micro_post/index.html.twig', [
-            'posts' => $this->getDoctrine()->getRepository(MicroPost::class)->findAll(),
-        ]);
+        return $this->render(
+            'micro_post/index.html.twig',
+            [
+                'posts' => $this->getDoctrine()->getRepository(MicroPost::class)->findAll(),
+            ]
+        );
     }
 
     /**
      * @Route("/edit/{id}", name="micro_post_edit")
      */
-    public function edit(MicroPost $microPost,Request $request)
+    public function edit(MicroPost $microPost, Request $request)
     {
-        $form =$this->createForm(MicroPostType::class, $microPost);
+        $form = $this->createForm(MicroPostType::class, $microPost);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->flush();
-            return new RedirectResponse($this->generateUrl('micro_post_post',[
-                'id'=> $microPost->getId()
-            ]));
+
+            return new RedirectResponse(
+                $this->generateUrl(
+                    'micro_post_post',
+                    [
+                        'id' => $microPost->getId(),
+                    ]
+                )
+            );
         }
-        return $this->render('micro_post/edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
+
+        return $this->render(
+            'micro_post/edit.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -56,20 +69,25 @@ class MicroPostController extends Controller
      */
     public function add(Request $request)
     {
-        $user = $this->getUser();
+        $user      = $this->getUser();
         $microPost = new MicroPost();
         $microPost->setUser($user);
-        $form =$this->createForm(MicroPostType::class, $microPost);
+        $form = $this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($microPost);
             $em->flush();
+
             return new RedirectResponse($this->generateUrl('micro_post_index'));
         }
-        return $this->render('micro_post/add.html.twig', [
-            'form'=> $form->createView()
-        ]);
+
+        return $this->render(
+            'micro_post/add.html.twig',
+            [
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     /**
@@ -78,11 +96,13 @@ class MicroPostController extends Controller
     public function post(MicroPost $microPost)
     {
         //$microPost =  $em = $this->getDoctrine()->getManager()->getRepository(MicroPost::class)->find($id);
-        return $this->render('micro_post/post.html.twig', [
-            'post' => $microPost,
-        ]);
+        return $this->render(
+            'micro_post/post.html.twig',
+            [
+                'post' => $microPost,
+            ]
+        );
     }
-
 
 
     /**
@@ -96,6 +116,7 @@ class MicroPostController extends Controller
         $em->remove($microPost);
         $em->flush();
         $this->addFlash('notice', 'Micro post was removed');
+
         return new RedirectResponse($this->generateUrl('micro_post_index'));
     }
 
@@ -104,9 +125,17 @@ class MicroPostController extends Controller
      */
     public function userPosts(User $user)
     {
+        $posts = $this->getDoctrine()->getRepository(MicroPost::class)->findBy(
+            ['user' => $user],
+            ['time' => 'DESC']
+        );
 
-        return $this->render('micro_post/index.html.twig', [
-            'posts' => $user->getPosts(),
-        ]);
+        return $this->render(
+            'micro_post/user-posts.html.twig',
+            [
+                'posts' => $user->getPosts(),
+                'user'  => $user,
+            ]
+        );
     }
 }
