@@ -25,10 +25,30 @@ class MicroPostController extends Controller
      */
     public function index()
     {
+        $currentUser = $this->getUser();
+        $usersToFollow = [];
+        $em = $this->getDoctrine()->getManager();
+
+        if ($currentUser instanceof User) {
+
+            $users = $currentUser->getFollowing();
+            $posts = $em->getRepository(MicroPost::class)->findAllByUsers($users);
+
+            $usersToFollow = count($posts) === 0 ? $em->getRepository(User::class)
+                ->findAllWithMoreThan5PostsExceptUser($currentUser) : [];
+        }else {
+
+            $posts = $this->getDoctrine()->getRepository(MicroPost::class)->findBy(
+                [],
+                ['time' => 'DESC']
+            );
+        }
+
         return $this->render(
             'micro_post/index.html.twig',
             [
-                'posts' => $this->getDoctrine()->getRepository(MicroPost::class)->findAll(),
+                'posts' => $posts,
+                'usersToFollow' => $usersToFollow,
             ]
         );
     }
