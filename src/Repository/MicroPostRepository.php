@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\MicroPost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -47,4 +48,18 @@ class MicroPostRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAllByUsers(Collection $users)
+    {
+        return $this->createQueryBuilder('m')
+            ->select('m')
+            ->leftJoin('m.user', 'user')
+            ->addSelect('user')
+            ->where('m.user IN (:following)')
+            ->setParameter('following', $users)
+            ->orderBy('m.time', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

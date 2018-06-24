@@ -37,6 +37,9 @@ class BlogController extends AbstractController
     public function index(Request $request)
     {
 
+        $url = $this->generateUrl('blog', ['page'=> 1]);
+       var_dump($url);
+        die;
         return $this->render(
             'base.html.twig'
         );
