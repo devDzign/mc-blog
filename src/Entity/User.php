@@ -83,12 +83,18 @@ class User implements UserInterface, \Serializable
      */
     private $following;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\MicroPost", mappedBy="likeBy")
+     */
+    private $postsLiked;
+
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->followers = new ArrayCollection();
         $this->following = new ArrayCollection();
+        $this->postsLiked = new ArrayCollection();
     }
 
 
@@ -365,7 +371,7 @@ class User implements UserInterface, \Serializable
     public function addFollowing(User $following): self
     {
         if (!$this->following->contains($following)) {
-            $this->following[] = $following;
+            $this->following->add($following);
         }
 
         return $this;
@@ -375,6 +381,37 @@ class User implements UserInterface, \Serializable
     {
         if ($this->following->contains($following)) {
             $this->following->removeElement($following);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|MicroPost[]
+     */
+    public function getPostsLiked(): Collection
+    {
+        return $this->postsLiked;
+    }
+
+    public function addPostsLiked(MicroPost $microPost): self
+    {
+        if (!$this->postsLiked->contains($microPost)) {
+            $this->postsLiked->add($microPost);
+            $microPost->addLikeBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostsLiked(MicroPost $post): self
+    {
+        if ($this->postsLiked->contains($post)) {
+            $this->postsLiked->removeElement($post);
+            // set the owning side to null (unless already changed)
+            if ($post->getUser() === $this) {
+                $post->setUser(null);
+            }
         }
 
         return $this;
