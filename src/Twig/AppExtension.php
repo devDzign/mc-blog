@@ -39,9 +39,14 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     }
 
 
-    public function euroFilter($number)
+    public function eurosFilter($number)
     {
-        return '€ - -- '.number_format($number, 2, '.', ',');
+        return '€ - '.number_format($number, 2, '.', ',');
+    }
+
+    public function helloFilter(string $name)
+    {
+        return "Hello '$name'";
     }
     public function getTests()
     {
