@@ -21,7 +21,7 @@
                             OK
                         </a>
                         {% if notification is like %}
-                            <a href="{{ path('micro_post_user', {'username': notification.likedBy.username}) }}">
+                            <a href="{{ path('micro_p     ost_user', {'username': notification.likedBy.username}) }}">
                                 {{ notification.likedBy.username }}</a>
                             likes your
                             <a href="{{ path('micro_post_post', {'id': notification.microPost.id}) }}">post</a>
