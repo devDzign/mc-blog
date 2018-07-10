@@ -53,7 +53,7 @@ class LikesController extends Controller
             return new JsonResponse([], Response::HTTP_UNAUTHORIZED);
         }
 
-        $microPost->getLikeBy()->removeElement($currentUser);
+        $microPost->removeLikeBy($currentUser);
         $this->getDoctrine()->getManager()->flush();
 
         return new JsonResponse(['count'=> $microPost->getLikeBy()->count()],Response::HTTP_OK);
