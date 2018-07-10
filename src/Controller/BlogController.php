@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Service\Greeting;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,11 +34,13 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/", name="blog")
+     * @Route("/", name="blog", requirements={})
      */
     public function index(Request $request)
     {
 
+
+      $this->get('mailer')->
         $url = $this->generateUrl('blog', ['page'=> 1]);
        var_dump($url);
         die;
