@@ -32,7 +32,7 @@ class LikesController extends Controller
 
             return new JsonResponse([], Response::HTTP_UNAUTHORIZED);
         }
-
+//die('mourad flush');
         $microPost->addLikeBy($currentUser);
         $this->getDoctrine()->getManager()->flush();
 

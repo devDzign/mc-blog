@@ -24,12 +24,13 @@ class LikeNotificationSubscriber implements EventSubscriber
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
+
         /** @var PersistentCollection $collectionUpdate */
         foreach ($uow->getScheduledCollectionUpdates() as $collectionUpdate) {
+
             if (!$collectionUpdate->getOwner() instanceof MicroPost) {
                 continue;
             }
-
 
             if ('likeBy' !== $collectionUpdate->getMapping()['fieldName']) {
 
