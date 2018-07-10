@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserRegisterEvent;
 use App\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +17,7 @@ class RegisterController extends Controller
     /**
      * @Route("/register", name="user_register")
      */
-    public function register(UserPasswordEncoderInterface $passwordEncoder, Request $request)
+    public function register(UserPasswordEncoderInterface $passwordEncoder, EventDispatcherInterface $eventDispatcher, Request $request)
     {
 
         $user = new User();
@@ -28,6 +30,8 @@ class RegisterController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+
+            $eventDispatcher->dispatch(UserRegisterEvent::NAME, new UserRegisterEvent($user));
 
             return new RedirectResponse($this->generateUrl('micro_post_index'));
         }
